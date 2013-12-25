@@ -16,5 +16,4 @@ fi
 
 echo "-----> Moving PhantomJS binary to ${BUILD_DIR}/vendor/phantomjs"
 mkdir -p $BUILD_DIR/vendor
-tar jxf $CACHE_DIR/$FILE_NAME -C $CACHE_DIR
 mv $CACHE_DIR/$FILE_NAME $BUILD_DIR/vendor/phantomjs
