@@ -1,16 +1,20 @@
 #!/bin/sh
 
-indent() {
-  sed -u 's/^/       /'
-}
+set -e
 
-echo "-----> Found a hello.txt"
+BUILD_DIR=$1
+CACHE_DIR=$2
 
-# if hello.txt is empty, abort the build
-if [ ! -s $1/hello.txt ]; then
-  echo "hello.txt was empty" | indent
-  exit 1
+FILE_NAME=phantomjs
+PHANTOM_DOWNLOAD_PATH=https://s3.amazonaws.com/phantomjs-body/${FILE_NAME}
+
+mkdir -p $CACHE_DIR
+if ! [ -e $CACHE_DIR/$FILE_NAME ]; then
+  echo "-----> Fetching PhantomJS custom binaries at ${BUILDPACK_PHANTOMJS_PACKAGE}"
+  curl $PHANTOM_DOWNLOAD_PATH -s -o $CACHE_DIR/$FILE_NAME
 fi
 
-# replace hello with goodbye in a new file
-cat $1/hello.txt | sed -e "s/[Hh]ello/Goodbye/g" > $1/goodbye.txt
+echo "-----> Moving PhantomJS binary to ${BUILD_DIR}/vendor/phantomjs"
+mkdir -p $BUILD_DIR/vendor
+tar jxf $CACHE_DIR/$FILE_NAME -C $CACHE_DIR
+mv $CACHE_DIR/$FILE_NAME $BUILD_DIR/vendor/phantomjs
